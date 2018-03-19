@@ -1,0 +1,468 @@
+#Quick Start Guide to ownCloud
+
+##Table of Contents
+
+1.  [**Prerequisites**](#prerequisistes)
+1.  [**Installation**](#installation)
+1.  [**Server Configuration**]()
+1.  [**User Permissions**]()
+1.  [**User Accounts**]()
+1.  [**End-User Access**]()
+1.  [**References**]()
+
+###Prerequisites
+Before beginning the installation process, make sure the system you are installing your ownCloud server on meets the [System Requirements](https://doc.owncloud.org/server/9.0/admin_manual/installation/system_requirements.html#system-requirements).
+
+Additional recommendations can be found within ownCloud's [Administration Manual](https://doc.owncloud.org/server/9.0/admin_manual/installation/deployment_recommendations.html#owncloud-deployment-recommendations) to help determine the best way to install and maintain an ownCloud server.
+
+###Installation
+
+####Preferred Linux Installation
+
+#####Step 1
+It is recommended to use the [Preferred Linux Installation](https://doc.owncloud.org/server/9.0/admin_manual/installation/linux_installation.html#preferred-linux-installation-method) method for single-server setups. This process requires the setup of a LAMP stack, which will prevent depdendency conflicts with ownCloud packages.
+
+A LAMP stack is a group of software that allows a server to host dynamic websites and web apps. You can learn about it [here](https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-16-04) and how to setup a Linux LAMP stack in preparation to installing ownCloud.
+
+#####Step 2
+Once the LAMP stack is installed, refer to ownCloud [download page](http://download.owncloud.org/download/repositories/9.1/owncloud/) and select the package for your Linux operating system, or distro.
+
+Available distro packages:
+
+*  CentOS
+*  Debian
+*  openSUSE
+*  SLE
+*  Ubuntu
+*  RHEL
+*  Univention
+
+Choose the appropriate distro package and follow the installation instruction. Once complete, proceed to the [Installation Wizard]() section to complete the installation process.
+
+####Manual Installation on Linux
+The Preferred Linux Installation does not support all distro packages. In this case, you are able to install ownCloud on your Linux system manually, using a [LAMP stack](https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-16-04), on an Ubuntu LTS server using the ownCloud [tarball](https://owncloud.org/download/) archive with Apache and MariaDB as your servers.
+
+**NOTE:** PHP modules are required for this installation and can be found [here](https://doc.owncloud.org/server/9.0/admin_manual/installation/source_installation.html#prerequisites).
+
+The following steps will take you through the process of installing the required modules for an ownCloud server on your Ubuntu LTS server.
+
+#####Step 1
+
+*  Open **terminal**
+*  Run the following commands, each line, separately:<br/><br/>
+
+	``apt-get install apache2 mariadb-server libapache2-mod-php5``
+	
+	``apt-get install php5-gd php5-json php5-mysql php5-curl``
+	
+	``apt-get install php5-intl php5-mcrypt php5-imagick``<br/><br/>
+	
+	
+	These commands will install the necessary packages for the ownCloud core system. It will provide required [PHP extensions](https://doc.owncloud.org/server/9.0/admin_manual/installation/source_installation.html#example-installation-on-ubuntu-14-04-lts-server).<br/><br/>
+	
+	You will be required to create a root password during your MySQL/MariaDB server. This will be referenced during the server configuration process. Make sure you record the password.
+	
+#####Step 2
+	
+*  Next, you will need to download the archive of the latest ownCloud version<br/><br/>
+	*  Open the ownCloud [download page](https://owncloud.org/download/)
+	*  Go to the [Resource](https://owncloud.org/download/#owncloud-server-tar-ball) section and download the Tar file or the Zip file<br/><br/>
+	
+	You will be required to download the respective md5 or sha256 checksum file. These files are for the purpose of detecting any errors that may occur during the download process of the archive.<br/><br/>
+	*  If you downloaded the Tar file, click the md5 or sha256 link below the **Download Tar** button.
+	*  If you downloaded teh Zip file, click the md5 or sha256 link below the **Download Zip** button.<br/><br/>
+	
+*  Now you must verify md5 or sha265 sum to detect any potential errors. You can do so by running the following commands in your terminal session, separately:<br/><br/>
+	
+	``md5sum -c owncloud-x.y.z.tar.bz2.md5 < owncloud-x.y.z.tar.bz2``
+	
+	``sha256sum -c owncloud-x.y.z.tar.bz2.sha256 < owncloud-x.y.z.tar.bz2``
+	
+	``md5sum  -c owncloud-x.y.z.zip.md5 < owncloud-x.y.z.zip``
+	
+	``sha256sum  -c owncloud-x.y.z.zip.sha256 < owncloud-x.y.z.zip``<br/><br/>
+	
+	**Note:** _x.y.z_ correlates to the version number of the downloaded files<br/><br/>
+
+	*  You may also verify PGP signature by running the following commands:<br/><br/>
+	
+		``wget https://download.owncloud.org/community/owncloud-x.y.z.tar.bz2.asc``
+	
+		``wget https://owncloud.org/owncloud.asc``
+	
+		``gpg --import owncloud.asc``
+	
+		``gpg --verify owncloud-x.y.z.tar.bz2.asc owncloud-x.y.z.tar.bz2``<br/><br/>
+	
+	These commands will download the PGP signature, import, and verify.
+	
+#####Step 3
+	
+*  Then, extract the archive contents by running the unpacking commands below:<br/><br/>
+	*  Tar files:<br/><br/>
+	
+		``tar -xjf owncloud-x.y.z.tar.bz2``<br/><br/>
+	
+	*  Zip files:<br/><br/>
+	
+		``unzip owncloud-x.y.z.zip``
+		
+#####Step 4
+		
+*  Finally, copy the single ownCloud directory to desired location. For Apache HTTP server, you will want to install in the Apache document root. Otherwise, it is recommended to install outside the document root.<br/><br/>
+
+	*  Copy the unpacked directory to the desired location:<br/><br/>
+	
+		``cp -r owncloud /path/to/webserver/document-root``<br/><br/>
+		
+		**Note:** _/path/to/webserver/document-root_ is replaced with the document root of your server
+
+Additional configuration is required for the Apache server, enabling SSL, proceeding to the installation wizard, setting strong directory permissions, and php.ini configuration. Below are direct links for these processes:
+
+*  [Apache Configuration](https://doc.owncloud.org/server/9.0/admin_manual/installation/source_installation.html#apache-web-server-configuration)
+*  [Enabling SSL](https://doc.owncloud.org/server/9.0/admin_manual/installation/source_installation.html#enabling-ssl)
+*  [Installation Wizard](https://doc.owncloud.org/server/9.0/admin_manual/installation/source_installation.html#installation-wizard)
+*	[Setting Strong Directory Permissions](https://doc.owncloud.org/server/9.0/admin_manual/installation/source_installation.html#setting-strong-directory-permissions)
+*	[Configuration of php.ini](https://doc.owncloud.org/server/9.0/admin_manual/installation/source_installation.html#php-ini-configuration-notes)
+
+###Installing ownCloud from Command Line
+Installing ownCloud can be performed completely from the command line. You will need refer to the **Preferred Linux Installation** and **Manual Installation on Linux** guides for this method.
+
+#####Step 1
+
+*  Download and install ownCloud via package manager or tarball
+	*  Package Manager - refer to **Step 2** of **Preferred Linux Installation**
+	*  Tarball - refer to **Manual Installation on Linux** method
+
+#####Step 2
+
+Next, you will need change the ownership of your ownCloud directory to your HTTP user. This user correlates to the Linux Distributions mentioned, **Step 2** of **Preferred Linux Installation**. Refer to [Run occ As Your HTTP User](https://doc.owncloud.org/server/9.0/admin_manual/configuration_server/occ_command.html#http-user-label) to determine your HTTP user and how to change ownership, via command line.
+
+#####Step 3
+
+Then, run the below occ command to complete the installtion. This command will replace the gui installation.
+
+``$ cd /var/www/owncloud/
+$ sudo -u www-data php occ  maintenance:install --database "mysql" 
+--database-name "owncloud"  --database-user "root" --database-pass "password" 
+--admin-user "admin" --admin-pass "password"``
+``ownCloud is not installed - only a limited number of commands are available
+ownCloud was successfully installed``
+
+**Note:** You will need to change the to the root directory, as shown above, to run __occ maintenance:install__
+
+Below are supported databases:
+
+*  sqlite (SQLite3 - ownCloud Community edition only)
+*  mysql (MySQL/MariaDB)
+*  pgsql (PostgreSQL)
+*  oci (Oracle - ownCloud Enterprise edition only)
+
+#####Step 4
+
+Finally, you apply strong permissions to your ownCloud files and directories. This protects your ownCloud installation and ensures it will run correctly. Refer to [Setting Strong Directory Permissions](https://doc.owncloud.org/server/9.0/admin_manual/installation/installation_wizard.html#strong-perms-label).
+
+
+####Installation Wizard
+The installation wizard is a simple, straight-forward process.
+
+#####Step 1
+
+Open a new tab in your web browser
+
+#####Step 2
+
+Click the address bar and input `http://localhost/owncloud` and hit enter
+
+You will be directed to the ownCloud server that was setup during the previous installation process. On the screen will be two fields, an admin username and password field.
+
+#####Step 3
+	
+Enter the desired admin username and password within the username and password fields
+
+#####Step 4
+
+Click *Finish Setup*
+
+The Installation Wizard is complete and you may proceed to server configuration.
+
+
+###Server Configuration
+
+####Configuring php.ini
+PHP settings are required to be configured for Owncloud to work properly. These settings can be update within the _php.ini_ file; though, it is recommended to keep php.ini at default.
+
+The web server uses the _php.ini_ file that is located within the directory associated to the installed PHP version. If PHP version 7.0 is installed on the server, it must look like the following:
+
+``/etc/php/[php_version]/apache2/php.ini
+/etc/php/7.0/apache2/php.ini``
+
+``/etc/php/[php_version]/fpm/php.ini
+/etc/php/7.0/fpm/php.ini``
+
+php-cli and Owncloud CRON jobs uses the following:
+
+``/etc/php/[php_version]/cli/php.ini
+/etc/php/7/cli/php.ini``
+
+**Note:** *[php_version]* is replaced by the installed PHP version number
+
+*sessions.auto_start* and *enable_post_data_reading* must be set specifically or login issues will with a “Access denied. CSRF check failed” error. These parameters exist within the *php.ini* file.
+
+#####Step 1
+
+Locate *php.ini*, edit the file and update the following parameters:
+
+*  **sessions.auto_start**
+	* specifies whether a sessions starts automatically on request startup. Setting this to 0 (default) or off will disable this feature. This must be set to 0 or off<br/><br/>
+	
+*  **enable_post_data_reading**
+	*  allows $_POST and $_FILES to be populated. This must be set to 1 or On or the postdata will only be read via _php://input_. Postdata is required to be readable in order to properly login.<br/><br/>
+
+*	**session.save_path**
+	*  Session stored files must be separated or session poisoning will occur. If *sessions.save_handler* is set to files, then *session.save_path* must be set to path.<br/><br/>
+
+**Note:** Only the webserver process can read from and write to.
+
+*  **suhosin.session.cryptkey**
+	*  When enabled, session data will be transparently encrypted.
+
+**Note:** this is only relevant to PHP 5.x
+
+*  **post_max_size**
+	*  This must be configured to the minimum memory required in use with Owncloud, 512 M (MB).
+
+*  **realpath_cache_size**
+	*  determines the size of the realpath cache used by PHP. The default value is 16 KB but is recommended to be increased if the system will be many files.
+	
+####PHP-FPM
+
+System environment variables are not automatically set when using PHP-FPM and must be set manually to the appropriate php-fpm *ini/config* file named *www.conf*.
+
+*  Ubuntu/Mint
+
+	``/etc/php/[php version]/fpm/``<br/><br/>
+
+*  CentOS/Red Hat/Fedora
+
+	``/etc/php-fpm.d/``<br/><br/>
+
+The environment variables exist in this file and may be commented out like below:
+
+``;env[HOSTNAME] = $HOSTNAME
+;env[TMP] = /tmp
+;env[TMPDIR] = /tmp
+;env[TEMP] = /tmp``
+		 
+Uncomment the appropriate entries and run the *printenv* PATH command to confirm your paths. The example below shows what to expect.
+
+``$ printenv PATH
+/home/user/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/``
+
+If any of the necessary variables do not exist in the file, they must be created.
+
+**Note:** When using shared hosting or control panel to manage Owncloud on the server, the files may already exist and should documentation should be checked for file location(s).
+
+####.htaccess
+
+ownCloud installs with it’s own *.htaccess* file. php-fpm cannot read PHP settings in *.htaccess*. In order to set these settings and permissions, it must be done within the owncloud/.user/.ini file.
+	
+
+####Config.php Parameters
+
+ownCloud uses *config/config.php* to control server operations and support loading parameters from multiple files. The default values, generated during installation, are necessary in order for your ownCloud server to operate. Most of these options can be configured on the Admin page.
+
+####Using occ Command Line
+
+occ is the command line interface for ownCloud and is a PHP script. Within this interface, you can perform common server operations to configure the server, such as:
+
+*  User Management
+*  Encryption
+*  Passwords
+*  LDAP Setting and more
+
+In order ot use occ, you must run it as your HTTP user. Refer to **Step 2** of **Installing ownCloud form Command Line** section.
+
+
+###User Permissions
+
+An administrator can setup user authentication with IMAP, SMB, FTP, as well as LDAP.
+
+To setup user authentication via MAP, SMB and FTP, *config/config.php* must be configured accordingly to the appropriate server.
+
+####IMAP
+
+*  **Class: OC_User_IMAP**
+	*  Tells ownCloud to specifically use the IMAP class to communicate with IMAP server
+*  **Arguments**
+	*  a mailbox string to open the stream and allow user access. See more detail [here](http://www.php.net/manual/en/function.imap-open.php)
+*  **Dependency**
+	*  php-imap, which is setup during the manual installation of ownCloud on Linux
+
+``<?php
+	   “user_backends” => array (
+	    	0 => array (
+			“class”		=> “OC_User_IMAP”,
+			“arguments”	=> array (
+						0 => ‘{imap.gmail.com:993/imap/ssl}’
+						),
+		),
+	    ),``
+
+
+
+####SMB
+
+*  **Class: OC_User_SMB**
+	*  Tells ownCloud to specifically use the SMB class to communicate with SMB server
+*  **Arguments**
+	*  Desired samba server to authenticate
+*  **Dependency**
+	*  PHP smbclient module or smbclient. See SMB/CIFS for more info.
+
+``<?php
+	   “user_backends” => array (
+	    	0 => array (
+			“class”		=> “OC_User_SMB”,
+			“arguments”	=> array (
+						0 => ‘localhost’
+						),
+		),
+	    ),``
+
+####FTP
+
+*  **Class: OC_User_FTP**
+	*  Tells ownCloud to specifically use the FTP class to communicate with FTP server
+*  **Arguments**
+	*  Desired FTP server to authenticate
+*  **Dependency**
+	*  php-ftp - See more detail [here](http://www.php.net/manual/en/function.imap-open.php)
+
+``<?php
+	   “user_backends” => array (
+	    	0 => array (
+			“class”		=> “OC_User_FTP”,
+			“arguments”	=> array (
+						0 => ‘localhost’
+						),
+		),
+	    ),``
+
+####LDAP
+
+ownCloud uses LDAP application to allow LDAP users, including Active Directory, access to the ownCloud server. You can learn more of the LDAP application support [here](https://doc.owncloud.org/server/9.0/admin_manual/configuration_user/user_auth_ldap.html#user-authentication-with-ldap).
+
+The LDAP user and group backend must first be enabled on the Apps page within ownCloud. Once enabled, it will need to be configured on the Admin page.
+
+#####Server
+
+The admin can configure the LDAP server(s) by adding a *host*, *port*, *user DN*, *password* and *base DN*. In addition, the admin can create an [user filter](https://doc.owncloud.org/server/9.0/admin_manual/configuration_user/user_auth_ldap.html#user-filter) to control which LDAP user is an ownCloud user. This is recommended for large directories.
+
+*  *Host*
+
+	This field identifies the LDAP server. Here will contain the host name or IP Address of the LDAP server.<br/><br/>
+
+* *Port*
+
+	This field identifies the port of which ownCloud will use to connect to the LDAP server.<br/><br/>
+
+**Note:** If the LDAP server is using a standard port, it will be detected automatically. Otherwise, the admin will be required to enter it manually.
+	
+*  *User DN*
+	
+	This field identifies the user who has permission to perform searches within the LDAP directory.<br/><br/>
+
+*  *Password*
+	
+	This field identifies the password that is associated with the User DN user.<br/><br/>
+
+*  *Base DN*
+	
+	This field identifies the base DN of the LDAP server that is being configured. This field may contain multiple base DNs.
+	
+**Note:** If ownCloud does not detect the Base DN, the admin will have to enter it manually.
+
+#####Login Filter
+
+The Login Filter tab is where the admin will give users the ability to access the ownCloud server and to which attribute(s) that will be required to be match from the provided login and the information the LDAP server provides. The admin may select multiple attributes.
+
+*  *LDAP Username*
+	
+	This option compares the login value to the username within the LDAP directory.<br/><br/>
+
+*  *LDAP Email Address*
+
+	This option compares the login value with the email address provided within the LDAP directory.<br/><br/>
+
+*  *Other Attributes*
+
+	This option allows to select from other attributes that the configured LDAP server may provide. Learn more about Other Attributes.<br/><br/>
+
+The admin has the ability to edit the raw filter instead of selecting from the other available options. Learn more about it [here](https://doc.owncloud.org/server/9.0/admin_manual/configuration_user/user_auth_ldap.html#login-filter).
+
+#####Group Filter
+
+The admin has the ability to setup a filter for groups that meet configured criteria set by object classes and/or specific groups. The admin is able to edit the raw filter as well. This configuration will determine which groups will be available. Learn more about [Group Filter](https://doc.owncloud.org/server/9.0/admin_manual/configuration_user/user_auth_ldap.html#group-filter).
+
+###User Account
+
+As an administrator, an user can be created on the user management page. You will see a username and password field where you can enter a new user and initial password.
+
+#####Step 1
+
+Enter a user name and password in the respective fields.
+
+#####Step 2
+
+You can assign the user to a grouping by click the drop down, next to the password field, and choose from he available options.
+
+Click “Create”.
+
+**Note:** user names must contain alphanumeric character and can addition characters, such as: dash (-), underscore (_), period (.), and the at sign (@).
+
+#####Step 3
+
+Once the user has been created, you can, optionally, fill in the rest of the information or leave the fields empty for the user to update.
+
+By checking the Send email to new user, in the control panel on the left side bar, you may enter the user’s email address and an email will be sent to the new user with login information.
+
+
+###End-User Access
+
+Users are able to access the ownCloud server via desktop and mobile client. The recommended solution is to download and install the ownCloud desktop [client](https://owncloud.org/download/#owncloud-desktop-client). The end user can configure this client to save files to an local directory and sync with any directory on the ownCloud server. The ownCloud [mobile app](https://owncloud.org/download/#owncloud-mobile-apps) is available for users that want to sync the ownCloud server to their Android or iOS device.
+
+####Mobile Users
+
+Users can connect to the ownCloud server by using the following URL:
+
+``example.org/owncloud``
+
+Replace the *example.org* URL with the ownCloud URL. Additionally, users are able to connect to the ownCloud server using third-party mobile applications listed [here](https://doc.owncloud.org/server/8.2/user_manual/files/access_webdav.html#owncloud-desktop-and-mobile-clients).
+
+####WebDAV Configuration
+
+Users are able to access the ownCloud server through different methods via WebDAV extension, to allow the user to create, read and edit files on the web server. Such methods include the following:
+
+#####Linux
+*  [Nautilus File Manager](https://doc.owncloud.org/server/8.2/user_manual/files/access_webdav.html#nautilus-file-manager)
+*  [KDE and Dolphin File Manager](https://doc.owncloud.org/server/8.2/user_manual/files/access_webdav.html#accessing-files-with-kde-and-dolphin-file-manager)
+*  [WebDAV mount](https://doc.owncloud.org/server/8.2/user_manual/files/access_webdav.html#creating-webdav-mounts-on-the-linux-command-line) via command link
+*  [Public shares over WebDAV](https://doc.owncloud.org/server/8.2/user_manual/files/access_webdav.html#accessing-public-shares-over-webdav)
+	
+#####Mac OS
+
+*  [Mac OS X Finder](https://doc.owncloud.org/server/8.2/user_manual/files/access_webdav.html#accessing-files-using-mac-os-x)
+
+#####Windows
+
+It is recommended to use the WebDAV client from the WebDAV project page. User can use the following methods to map the ownCloud server to a new drive:
+
+*  [Mapping drives via command line](https://doc.owncloud.org/server/8.2/user_manual/files/access_webdav.html#mapping-drives-with-the-command-line)
+*  [Mapping drives via windows explorer](https://doc.owncloud.org/server/8.2/user_manual/files/access_webdav.html#mapping-drives-with-windows-explorer)
+*  [Cyberduck](https://doc.owncloud.org/server/8.2/user_manual/files/access_webdav.html#accessing-files-using-cyberduck)*
+
+*Cyberduck is an open source FTP and SFTP, WebDAV, OpenStack Swift, and Amazon S3 browser designed for file transfers on both Mac OS X and Windows.
+
+###Refrerences
+[ownCloud Documentation](https://doc.owncloud.org/server/9.0/admin_manual/contents.html)
